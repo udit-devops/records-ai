@@ -487,10 +487,10 @@
 
   /* video-card */
   .video-card {
-    @apply flex flex-col rounded-2xl w-full border border-gray-20 aspect-[16/9] relative;
+    @apply flex flex-col rounded-2xl w-[340px] border border-gray-20 aspect-[16/9] relative;
 
     .thumbnail {
-      @apply w-full rounded-t-2xl object-cover h-[190px];
+      @apply w-full rounded-t-2xl object-cover h-[160px];
     }
 
     article {

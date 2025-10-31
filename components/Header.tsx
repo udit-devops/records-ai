@@ -2,6 +2,7 @@ import { ICONS } from '@/constants'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import DropDownList from './DropDownList'
 
 const Header = ({subHeader , title , userImg}:SharedHeaderProps) => {
   return (
@@ -40,7 +41,7 @@ const Header = ({subHeader , title , userImg}:SharedHeaderProps) => {
             <input type="text" placeholder='  Search for videos , tags , folders...'/>
             <Image src='/assets/icons/search.svg'alt='search' width={24} height={24}/>
           </div>
-             {`<DropdownList /> `}
+             <DropDownList /> 
         </section>
     </header>
   )
