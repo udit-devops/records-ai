@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Ace-Coder-s-workspace-pksa6s.eu-central-1.xata.sh/db/ud-ucast",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
