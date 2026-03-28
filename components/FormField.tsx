@@ -2,18 +2,23 @@ import React from 'react'
 
 const FormField = ({id, label , type ="text", value , onChange, placeholder, as ='input',options = []}:FormFieldProps) => {
   const InputToRender = ({type}:{type:string}) =>{
-    if(type ==='textarea'){
-      return  <textarea
+    
+  }
+  return (
+<div className='form-field'>
+     <label htmlFor={id}>{label}</label>
+
+     {as === 'textarea' ? 
+      (<textarea
       id={id}
       name={id}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
       
-      /> 
-     }
-    else if(type ==='select'){
-      return <select
+      /> ): as === 'select' ?(
+       
+       <select
       id={id}
       name={id}
       value={value}
@@ -24,10 +29,9 @@ const FormField = ({id, label , type ="text", value , onChange, placeholder, as 
         {options.map(({label, value})=>(
              <option key={label} value={value}>{label}</option>
         ))}
-        </select>
-    }
-    else{
-      return <input
+        </select>) : 
+    
+    (<input
       id={id}
       name={id}
       value={value}
@@ -35,14 +39,8 @@ const FormField = ({id, label , type ="text", value , onChange, placeholder, as 
       placeholder={placeholder}
 
       
-      />
+      />)
     }
-  }
-  return (
-<div className='form-field'>
-     <label htmlFor={id}>{label}</label>
-
-     <InputToRender type={as}/>
 </div>
   )
 }

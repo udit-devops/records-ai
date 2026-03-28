@@ -1,6 +1,8 @@
 "use client";
 import FileInput from "@/components/FileInput";
 import FormField from "@/components/FormField";
+import { MAX_THUMBNAIL_SIZE, MAX_VIDEO_SIZE } from "@/constants";
+import { useFileInput } from "@/lib/hooks/useFileInput";
 import React, { ChangeEvent, useState } from "react";
 
 const page = () => {
@@ -10,11 +12,11 @@ const page = () => {
     visibility: "public",
   })
 
-  const video = {};
-  const thumbnail = {};
+  const video = useFileInput(MAX_VIDEO_SIZE);
+  const thumbnail = useFileInput(MAX_THUMBNAIL_SIZE);
   const [error, setError] = useState(null);
   
-  const handleInputChange = (e:ChangeEvent) =>{
+  const handleInputChange = (e:ChangeEvent<HTMLInputElement>) =>{
     const {name , value} = e.target;
 
     setFormData((prevState)=>({...prevState, [name]:value}))
@@ -48,7 +50,7 @@ const page = () => {
       accept="video/*"
       file={video.file}
       previewUrl={video.previewUrl}
-      onFileChange={video.handleFileChange}
+      onChange={video.handleFileChange}
       inputRef={video.inputRef}
       onReset ={video.resetFile}
       type="video"
@@ -60,7 +62,7 @@ const page = () => {
       accept="image/*"
       file={thumbnail.file}
       previewUrl={thumbnail.previewUrl}
-      onFileChange={thumbnail.handleFileChange}
+      onChange={thumbnail.handleFileChange}
       inputRef={thumbnail.inputRef}
       onReset ={thumbnail.resetFile}
       type="video"
