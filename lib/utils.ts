@@ -84,21 +84,20 @@ export const apiFetch = async <T = Record<string, unknown>>(
 };
 
 // Higher order function to handle errors
-export const withErrorHandling = <T, A extends unknown[]>(
+export const withErrorHandling = <T extends object, A extends unknown[]>(
   fn: (...args: A) => Promise<T>
 ) => {
-  return async (...args: A): Promise<T> => {
+  return async (...args: A): Promise<(T & { success: true; error: null }) | { success: false; error: string }> => {
     try {
       const result = await fn(...args);
-      return result;
+      return { success: true, error: null, ...result };
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
-      return errorMessage as unknown as T;
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("🔴 withErrorHandling caught:", errorMessage);
+      return { success: false, error: errorMessage };
     }
   };
 };
-
 // export const getOrderByClause = (filter?: string) => {
 //   switch (filter) {
 //     case "Most Viewed":
