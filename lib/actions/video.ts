@@ -7,6 +7,8 @@ import { BUNNY } from "@/constants"
 import { videos } from "@/drizzle/schema"
 import { db } from "@/drizzle/db"
 import { revalidatePath } from "next/cache"
+import { fixedWindow, request } from "@arcjet/next"
+import aj from "../arcjet"
 
 
 
@@ -56,7 +58,24 @@ export const getVideoUploadUrl = withErrorHandling(async () =>{
 export const revalidatePaths = async(paths:string[]) =>{
    paths.forEach((path)=> revalidatePath(path))
 }
+const validateWithArcjet = async (fingerprint:string) =>{
+   const rateLimit = aj.withRule(
+      fixedWindow({
+         window:'1m',
+         mode:'LIVE',
+         max:1,
+         characteristics : ['fingerprint'],
 
+         
+      })
+   )
+   const req = await request();
+   const decision = await rateLimit.protect(req,{fingerprint})
+
+   if(decision.isDenied()){
+      throw new Error("rate limit excedded")
+   }
+}
 export const getThumbnailUploadUrl = withErrorHandling(async (videoId: string)=>{
             const fileName = `${Date.now()}-${videoId}-thumbnail}`
             const uploadurl = `${THUMBNAIL_STORAGE_URL}/thumbnails/${fileName}`;
