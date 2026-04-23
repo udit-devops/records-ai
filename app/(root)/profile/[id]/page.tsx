@@ -16,7 +16,7 @@ const page = async({params}:ParamsWithSearch) => {
         
      <section className="video-grid">
        {dummyCards.map((card) => (
-    <VideoCard key = {card.id}{...card}/>
+    <VideoCard key = {card.id}{...card} visibility={card.visibility as "public" | "private"}/>
    ))}
       
      </section>

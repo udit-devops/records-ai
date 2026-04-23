@@ -1,14 +1,20 @@
 'use server'
 
-import { apiFetch, getEnv, withErrorHandling } from "../utils"
+import { apiFetch, doesTitleMatch, getEnv, withErrorHandling } from "../utils"
 import { auth } from "../auth"
 import { headers } from "next/headers"
 import { BUNNY } from "@/constants"
-import { videos } from "@/drizzle/schema"
+import { user, videos } from "@/drizzle/schema"
 import { db } from "@/drizzle/db"
 import { revalidatePath } from "next/cache"
 import { fixedWindow, request } from "@arcjet/next"
 import aj from "../arcjet"
+import { and, eq, or } from "drizzle-orm/sql/expressions/conditions"
+
+
+import { sql } from "drizzle-orm/sql/sql"
+import { any } from "better-auth"
+import { getOrderByOperators } from "drizzle-orm"
 
 
 
@@ -23,7 +29,7 @@ const BUNNY_LIBRARY_ID = getEnv("BUNNY_LIBRARY_ID")
  }
 
 
-
+// helper function
 const getSessionUserId = async (): Promise<string> =>{
 const session = await auth.api.getSession({headers: await headers()})
 if (!session ) throw new Error("no autheticated user")
@@ -54,6 +60,16 @@ export const getVideoUploadUrl = withErrorHandling(async () =>{
          }
         
 }) 
+
+const buildVideoWithUserQuery = () =>{
+    return db 
+    .select({
+      videos : videos,
+      user :{id:user.id, name:user.name , image: user.image}
+    })
+    .from(videos)
+    .leftJoin(user,eq(videos.userId,user.id))
+}
 
 export const revalidatePaths = async(paths:string[]) =>{
    paths.forEach((path)=> revalidatePath(path))
@@ -89,7 +105,18 @@ export const getThumbnailUploadUrl = withErrorHandling(async (videoId: string)=>
 
             }
 })
-
+const getOrderByClause = (sortFilter: string) => {
+  switch (sortFilter) {
+    case "newest":
+      return sql`${videos.createdAt} desc`
+    case "oldest":
+      return sql`${videos.createdAt} asc`
+    case "views":
+      return sql`${videos.views} desc`
+    default:
+      return sql`${videos.createdAt} desc`
+  }
+}
 export const saveVideoDetails = withErrorHandling(async (videoDetails:VideoDetails) => {
   const userId = await getSessionUserId();
   await validateWithArcjet(userId)
@@ -123,11 +150,48 @@ export const saveVideoDetails = withErrorHandling(async (videoDetails:VideoDetai
    
 export const getAllVideos = withErrorHandling(
   async (
-    searchQuerry: string = '',
+    searchQuery: string = '',
     sortFilter?: string,
     pageNumber: number = 1,
-    pageSize: number = 10
+    pageSize: number = 10,
   ) => {
-return { success: true };
+  const session = await auth.api.getSession({headers: await headers()})
+  const currentUserId = session?.user.id
+  const canSeeTheVideos = or(
+   eq(videos.visibility, 'public'),
+   eq(videos.userId,currentUserId!)
+  )
+  const whereCondition = searchQuery.trim()
+  ? and(
+   canSeeTheVideos,
+   doesTitleMatch(videos,searchQuery),
+
+  )
+  : canSeeTheVideos
+
+  const [{totalCount}] = await db 
+  .select({totalCount: sql<number>`count(*)`})
+  .from(videos)
+  .where(whereCondition)
+  const totalVideos =Number(totalCount||0);
+  const totalPages = Math.ceil(totalVideos / pageSize);
+  const videoRecords = await buildVideoWithUserQuery()
+   .where(whereCondition)
+    .orderBy(
+      sortFilter
+          ? getOrderByClause(sortFilter)
+          : sql`${videos.createdAt} desc`
+    ).limit(pageSize)
+    .offset((pageNumber - 1) * pageSize)
+  return{
+   videos:videoRecords,
+   pagination:{
+      currentPage:pageNumber,
+      totalPages,
+      totalVideos,
+      pageSize
+   }
+
+  };
   }
 );
