@@ -1,3 +1,4 @@
+import EmptyState from '@/components/EmptyState'
 import Header from '@/components/Header'
 import VideoCard from '@/components/VideoCard'
 import { dummyCards } from '@/constants'
@@ -19,10 +20,18 @@ const { videos, pagination } = res
    
       {videos?.length>0 ? (
         <section className="video-grid">
-          {videos[0].videos.title}
+           {videos.map(({videos,user}) =>(
+            <VideoCard 
+            key={videos.id} 
+            {...videos} 
+            thumbnail={videos.thumbnailUrl}
+            userImg={user?.image || ' '}
+            username={user?.name|| 'Guest'}
+            />
+           ))}
           </section>
       ):(
-            <div>Empty</div>
+            <EmptyState icon='/assets/icons/video.svg' title='No Video Found' description='Try adjustiong your search'/>
       )}
       
       </main>

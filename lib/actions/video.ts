@@ -93,7 +93,7 @@ const validateWithArcjet = async (fingerprint:string) =>{
    }
 }
 export const getThumbnailUploadUrl = withErrorHandling(async (videoId: string)=>{
-            const fileName = `${Date.now()}-${videoId}-thumbnail}`
+            const fileName = `${Date.now()}-${videoId}-thumbnail`
             const uploadurl = `${THUMBNAIL_STORAGE_URL}/thumbnails/${fileName}`;
             const cdnurl = `${CDN_URL}/thumbnails/${fileName}`
 
@@ -195,3 +195,8 @@ export const getAllVideos = withErrorHandling(
   };
   }
 );
+export const getVideoById = withErrorHandling(async(videoId: string)=>{
+  const [videoRecord] = await buildVideoWithUserQuery()
+  .where(eq(videos.id,videoId))
+  return videoRecord
+})
