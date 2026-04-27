@@ -17,9 +17,10 @@ const { user, videos } = res
   return (
     <main className='wrapper page'>
       <h1 className="text-2xl">{videos.title}</h1>
+      <h1 className="text-2xl">{videos.id}</h1>
       <section className="video-details">
         <div className="content">
-         <VideoPlayer videoId={videos.id}/>
+         <VideoPlayer videoId={videos.videoId}/>
         </div>
       </section>
    
