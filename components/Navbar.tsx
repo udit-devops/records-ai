@@ -1,14 +1,16 @@
 'use client'
 
+import { authClient } from '@/lib/auth-client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import React from 'react'
+import { useAtom } from "jotai";
 
-
-const user = {}
 const Navbar = () => {
-  const router = useRouter()
+  const router = useRouter();
+  const  {data:session} = authClient.useSession();
+  const user = session?.user;
   return (
     <header className='navbar'>
       <nav>
@@ -19,8 +21,8 @@ const Navbar = () => {
 {user &&(
  
         <figure  className='flex gap-9'>
-          <button  onClick={() => router.push('/profile/123459')}>
-            <Image src="/assets/images/dummy.jpg" alt="User" width={32} height={32} className='rounded-full aspect-square'/>
+          <button  onClick={() => router.push(`/profile/${user?.id}`)}>
+            <Image src={user?.image || ''}alt="User" width={32} height={32} className='rounded-full aspect-square'/>
           </button> 
    
           <button className='cursor-pointer'>

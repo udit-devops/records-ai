@@ -1,3 +1,4 @@
+import VideoDetailHeader from "@/components/VideoDetailHeader"
 import VideoPlayer from "@/components/VideoPlayer"
 import { getVideoById } from "@/lib/actions/video"
 import { url } from "inspector/promises"
@@ -16,8 +17,9 @@ const { user, videos } = res
    if(!videos) redirect('/404')
   return (
     <main className='wrapper page'>
-      <h1 className="text-2xl">{videos.title}</h1>
-      <h1 className="text-2xl">{videos.id}</h1>
+      <VideoDetailHeader {...videos} userImg={user?.image} username={user?.name} ownerId={videos.userId}/>
+      {/* <h1 className="text-2xl">{videos.title}</h1>
+      <h1 className="text-2xl">{videos.id}</h1> */}
       <section className="video-details">
         <div className="content">
          <VideoPlayer videoId={videos.videoId}/>
