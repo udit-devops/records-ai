@@ -18,5 +18,10 @@ socialProviders:{
 plugins:[nextCookies()],
 baseURL: process.env.NEXT_PUBLIC_BASE_URL, 
   trustedOrigins: ["https://records-ai.vercel.app"], 
-
+ advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    }
+  }
 })
