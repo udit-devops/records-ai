@@ -16,6 +16,7 @@ socialProviders:{
     }
 },
 plugins:[nextCookies()],
-baseURL:"http://localhost:3000",
+baseURL: process.env.NEXT_PUBLIC_BASE_URL, 
+  trustedOrigins: ["https://records-ai.vercel.app"], 
 
 })
