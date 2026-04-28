@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import DropDownList from './DropDownList'
+import RecordScreen from './RecordScreen'
 
 const Header = ({subHeader , title , userImg}:SharedHeaderProps) => {
   return (
@@ -26,12 +27,7 @@ const Header = ({subHeader , title , userImg}:SharedHeaderProps) => {
                <span>Upload</span>
 
               </Link>
-               <div className='record'>
-              <button className='primary-btn'>
-                <Image src={ICONS.record} alt='record' width={15} height={15}/>
-               <span>Record the video</span> 
-                </button>
-            </div>
+               <RecordScreen />
             </aside>
            
         </section>

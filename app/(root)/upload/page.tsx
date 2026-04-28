@@ -137,7 +137,7 @@ const onSubmit = async (e: FormEvent) => {
       throw new Error(saveRes.error || "Failed to save video details");
     }
 
-    router.push(`/video/${videoId}`);
+    router.push(`/`);
   } catch (error) {
     console.error("Error submitting form:", error);
   } finally {

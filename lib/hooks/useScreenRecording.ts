@@ -26,7 +26,10 @@ export const useScreenRecording = () => {
     return () => {
       stopRecording();
       if (state.recordedVideoUrl) URL.revokeObjectURL(state.recordedVideoUrl);
+      if (audioContextRef.current ?.state!=='closed'){
       audioContextRef.current?.close().catch(console.error);
+      }
+      audioContextRef.current = null;
     };
   }, [state.recordedVideoUrl]);
 
